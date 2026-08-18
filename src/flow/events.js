@@ -22,13 +22,13 @@ export function evOdds(){ /* 事件卡成功率:顯示與擲骰共用同一來�
   // 1. 基礎隨機 1 ~ 100
   let base = Math.floor(Math.random() * 100) + 1;
   // 2. 特質加成/扣減
-  if(S.traits.genius || S.traits.late || S.traits.clutch) base *= 1.2; /* 天才/大器晚成/大心臟 ×1.2 */
+  if(S.traits.genius || S.traits.late || S.traits.clutch) base *= 1.3; /* 天才/大器晚成/大心臟 ×1.2 */
   if(S.traits.thief) base -= 10; /* 薪水小倫 -10 */
   // 3. 大心臟判斷 (有大心臟不打折，沒有大心臟打 85 折/0.85)
   const boldPen = S.traits.clutch ? 1 : 0.9;
   // 4. 計算三個選項並用 Math.min(100, ...) 限制最大值不超過 100，同時用 Math.round 四捨五入
-  let saf = Math.min(100, Math.round(base * 1.3));
-  let nor = Math.min(100, Math.round(base * 1.1));
+  let saf = Math.min(100, Math.round(base * 1.5));
+  let nor = Math.min(100, Math.round(base * 1.2));
   let bol = Math.min(100, Math.round(base * boldPen));
   // 5. 確保成功率不會低於 0%（防止出現負數）
   saf = Math.max(0, saf);
