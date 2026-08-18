@@ -19,10 +19,22 @@ export function checkChampionTrait(){
   return false;
 }
 export function evOdds(){ /* 事件卡成功率:顯示與擲骰共用同一來源 */
-  let base=(S.traits.genius||S.traits.late||S.traits.clutch)?70:50; /* 天才/大器晚成/大心臟 70 */
-  if(S.traits.thief)base-=10; /* 薪水小倫 -10 */
-  const boldPen=S.traits.clutch?0:15; /* 大心臟:豪賭無懲罰 */
-   return {safe:Math.min(95,base+20), norm:base, bold:100};
+  // 1. 基礎隨機 1 ~ 100
+  let base = Math.floor(Math.random() * 100) + 1;
+  // 2. 特質加成/扣減
+  if(S.traits.genius || S.traits.late || S.traits.clutch) base *= 1.2; /* 天才/大器晚成/大心臟 ×1.2 */
+  if(S.traits.thief) base -= 10; /* 薪水小倫 -10 */
+  // 3. 大心臟判斷 (有大心臟不打折，沒有大心臟打 85 折/0.85)
+  const boldPen = S.traits.clutch ? 1 : 0.9;
+  // 4. 計算三個選項並用 Math.min(100, ...) 限制最大值不超過 100，同時用 Math.round 四捨五入
+  let saf = Math.min(100, Math.round(base * 1.1));
+  let nor = Math.min(100, Math.round(base));
+  let bol = Math.min(100, Math.round(base * boldPen));
+  // 5. 確保成功率不會低於 0%（防止出現負數）
+  saf = Math.max(0, saf);
+  nor = Math.max(0, nor);
+  bol = Math.max(0, bol);
+  return {safe: saf, norm: nor, bold: bol};
 }
 export function eventEligible(ev,state){
   const s=state||S;
