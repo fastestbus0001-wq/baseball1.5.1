@@ -105,7 +105,7 @@ function showEvent(ev,after){
     ['safe','加成／減益幅度最小',false,false],
   ].map(([mode,scale,warn,main])=>{
     const c=ev.choices[mode];
-    return {t:c.label,warn,main,center:true,s:`成功率 ${od[mode]}%｜${scale}`,f:()=>resolveEvent(ev,mode,after)};
+    return {t:c.label,warn,main,center:true,s:`成功率 ${od[mode]}%｜${scale}`,f:()=>resolveEvent(ev,mode,after,od)};
   });
   choose(`事件｜${EVENT_CATEGORY_NAMES[ev.category]}｜${ev.n}<br><small>${ev.intro}</small>`,opts);
 }
@@ -151,9 +151,9 @@ export function drawEvents(done){
     f:()=>runEventCards(drawEventCards(route.combination,S),done,0)
   })));
 }
-export function resolveEvent(ev,mode,done){
+export function resolveEvent(ev,mode,done,currentOd){
   done=done||function(){};
-  const od=evOdds(); /* 與畫面顯示同源,保證所見即所得 */
+  const od=currentOd||evOdds(); /* 優先接收並使用UI顯示時已產生的同一組od */
   if(mode==='safe')S.cntSave++;
   let good,tag;
   if(mode==='safe'){ good=chance(od.safe); tag='保守應對'; }
