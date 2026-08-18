@@ -97,17 +97,27 @@ export function eventPlan(category,mode,good,clutch){
   if(mode==='norm')return {ability:good?1:0,stat:good?0:-1,cash:good};
   return {ability:good?1:0,stat:good?(clutch?2:1):(clutch?-1:-2),cash:good};
 }
-function showEvent(ev,after){
-  const od=evOdds();
-  const opts=[
-    ['bold','加成／減益幅度最大',true,false],
-    ['norm','加成／減益幅度中等',false,true],
-    ['safe','加成／減益幅度最小',false,false],
-  ].map(([mode,scale,warn,main])=>{
-    const c=ev.choices[mode];
-    return {t:c.label,warn,main,center:true,s:`成功率 ${od[mode]}%｜${scale}`,f:()=>resolveEvent(ev,mode,after)};
+function showEvent(ev, after) { // 1. 修正小寫 function
+  const od = evOdds(); // 在此時隨機決定本次事件的所有成功率
+  
+  const opts = [
+    ['bold', '加成／減益幅度最大', true, false],
+    ['norm', '加成／減益幅度中等', false, true],
+    ['safe', '加成／減益幅度最小', false, false],
+  ].map(([mode, scale, warn, main]) => {
+    const c = ev.choices[mode];
+    return {
+      t: c.label,
+      warn,
+      main,
+      center: true,
+      s: `成功率 ${od[mode]}%｜${scale}`,
+      // 2. 將 od[mode] (例如 45) 當作參數傳給 resolveEvent
+      f: () => resolveEvent(ev, mode, after, od[mode]) 
+    };
   });
-  choose(`事件｜${EVENT_CATEGORY_NAMES[ev.category]}｜${ev.n}<br><small>${ev.intro}</small>`,opts);
+  
+  choose(`事件｜${EVENT_CATEGORY_NAMES[ev.category]}｜${ev.n}<br><small>${ev.intro}</small>`, opts);
 }
 export function drawEventCards(sequence,state){
   const used=new Set();
